@@ -2,6 +2,11 @@
 samconfig.toml
 .aws-sam/
 
+# Aurora forecast output
+results/
+
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

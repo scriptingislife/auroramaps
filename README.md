@@ -18,9 +18,11 @@ OVATION has been largely rewritten based on [Ovation Pyme](https://github.com/lk
 ## Run locally with Docker
 
 ```
-docker buildx build --platform linux/amd64 -t "aurora:latest" .
-docker run --name forecast aurora
+docker buildx build --platform linux/amd64 -t "auroramaps:latest" .
+docker run --name forecast -v ${PWD}/results:/usr/local/app/results/aurora_test_real2 auroramaps
 ```
+
+Forecast output is written to `results/` on the host.
 
 ## Run automatically in AWS
 
