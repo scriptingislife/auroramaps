@@ -638,7 +638,7 @@ def uploadDirectory(path,bucketname):
       for root,dirs,files in os.walk(path):
           for file in files:
               print("Uploading " + file)
-              s3C.upload_file(os.path.join(root,file),bucketname,file)
+              s3C.upload_file(os.path.join(root,file),bucketname,file, ExtraArgs={'Metadata': {'Cache-Control': 'max-age=3600'}})
 
 resultsbucket = os.environ.get("RESULTS_BUCKET")
 if resultsbucket:

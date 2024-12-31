@@ -53,6 +53,12 @@ Resources:
           Environment:
             - Name: RESULTS_BUCKET
               Value: !Ref ResultsBucket
+            - Name: AURORA_FUTURE_HOURS
+              Value: "6"
+            - Name: AURORA_CANADA_FLUX_MAP
+              Value: "1"
+            - Name: AURORA_FRAME_RATE
+              Value: "2"
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -183,3 +189,33 @@ Resources:
                 Subnets:
                   - !Ref SubnetId
 
+  CheckCoordsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: checker/
+      Handler: checker.main
+      Runtime: python3.11
+      Timeout: 10
+      Architectures:
+        - x86_64
+      Events:
+        CheckCoords:
+          Type: Api
+          Properties:
+            Path: /check
+            Method: get
+      Environment:
+        Variables:
+          RESULTS_BUCKET: !Ref ResultsBucket
+      Policies:
+        - Statement:
+          - Sid: CheckCoordsPolicy
+            Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: !Sub "${ResultsBucket.Arn}/*"
+
+Outputs:
+  CheckerApi:
+    Description: "API Gateway endpoint URL for coordinate checker function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/check"
