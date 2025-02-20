@@ -1,9 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Forecast</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sigmar&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            overflow: hidden;
+        }
+        h1 {
+            font-family: 'Sigmar', cursive;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+        .gallery {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: show;
+            width: 100%;
+            position: relative;
+        }
+        .gallery img {
+            position: absolute;
+            /*transition: transform 0.3s ease, opacity 0.3s ease;*/
+            opacity: 0;
+        }
+        .gallery img.active {
+            width: 600px;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .gallery img.left {
+            width: 200px;
+            opacity: 0.7;
+            transform: translateX(-350px);
+        }
+        .gallery img.right {
+            width: 200px;
+            opacity: 0.7;
+            transform: translateX(350px);
+        }
+    </style>
+</head>
 <body>
+    <div class="gallery">
+        <img src="https://dev-aurora-static.scriptingis.life/aurora_00000.jpg" class="thumb" data-index="0">
+        <img src="https://dev-aurora-static.scriptingis.life/aurora_00001.jpg" class="thumb" data-index="1">
+        <img src="https://dev-aurora-static.scriptingis.life/aurora_00002.jpg" class="thumb" data-index="2">
+        <img src="https://dev-aurora-static.scriptingis.life/aurora_00003.jpg" class="thumb" data-index="3">
+        <img src="https://dev-aurora-static.scriptingis.life/aurora_00004.jpg" class="thumb" data-index="4">
+        <img src="https://dev-aurora-static.scriptingis.life/aurora_00005.jpg" class="thumb" data-index="5">
+        <img src="https://dev-aurora-static.scriptingis.life/aurora_00006.jpg" class="thumb" data-index="6">
+    </div>
 
-<h1>Aurora forecast</h1>
-<img src="https://dev-aurora-static.scriptingis.life/flux_global.gif" alt="Global forecast GIF" />
-
+    <script>
+        $(document).ready(function() {
+            let currentIndex = 0;
+            function updateGallery(index) {
+                $('.thumb').removeClass('active left right');
+                $('.thumb').css('opacity', '0');
+                $('.thumb').eq(index).addClass('active').css('opacity', '1');
+                if (index > 0) $('.thumb').eq(index - 1).addClass('left').css('opacity', '0.7').attr('src', 'https://dev-aurora-static.scriptingis.life/aurora_0000' + (index - 1) + '.jpg');
+                if (index < 6) $('.thumb').eq(index + 1).addClass('right').css('opacity', '0.7').attr('src', 'https://dev-aurora-static.scriptingis.life/aurora_0000' + (index + 1) + '.jpg');
+                currentIndex = index;
+            }
+            $('.thumb').click(function() {
+                let index = $(this).data('index');
+                updateGallery(index);
+            });
+            $(document).keydown(function(e) {
+                if (e.key === "ArrowRight" && currentIndex < 6) {
+                    updateGallery(currentIndex + 1);
+                } else if (e.key === "ArrowLeft" && currentIndex > 0) {
+                    updateGallery(currentIndex - 1);
+                }
+            });
+            let startX = 0;
+            let endX = 0;
+            $('.gallery').on('touchstart', function(e) {
+                startX = e.originalEvent.touches[0].clientX;
+            });
+            $('.gallery').on('touchmove', function(e) {
+                endX = e.originalEvent.touches[0].clientX;
+            });
+            $('.gallery').on('touchend', function() {
+                if (startX - endX > 50 && currentIndex < 6) {
+                    updateGallery(currentIndex + 1);
+                } else if (endX - startX > 50 && currentIndex > 0) {
+                    updateGallery(currentIndex - 1);
+                }
+            });
+            updateGallery(0);
+        });
+    </script>
 </body>
 </html>
